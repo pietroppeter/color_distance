@@ -1,2 +1,2 @@
 switch("path", "$projectDir/../src")
-switch("define", "debugDeltaE00")
+# switch("define", "debugDeltaE00")
