@@ -12,7 +12,7 @@ proc myAtan(x, y: float32): float32 =
   else:
     arctan2(x, y).radToDeg + 360
 
-proc deltaE00(c1, c2: ColorLAB, k_L, k_C, k_H = 1.float32): float32 =
+func deltaE00(c1, c2: ColorLAB, k_L, k_C, k_H = 1.float32): float32 =
   let
     C1 = sqrt(c1.a^2 + c1.b^2)  # C1 and C2 are only used in computation of CM, we can remove them (or rename them C1star)
     C2 = sqrt(c2.a^2 + c2.b^2)
@@ -89,6 +89,9 @@ proc deltaE00(c1, c2: ColorLAB, k_L, k_C, k_H = 1.float32): float32 =
     dump (deltaHH/(k_H*S_H))
     dump result
 
+func deltaE00*(c1, c2: string): float32 =
+  deltaE00(parseHex(c1).lab, parseHex(c2).lab)
+
 when isMainModule:
   import unittest, parsecsv, strutils
 
@@ -101,8 +104,51 @@ when isMainModule:
     x.readHeaderRow()
     assert x.headers == @["c1l", "c1a", "c1b", "c2l", "c2a", "c2b", "deltaE00"]
     var c1, c2: ColorLAB
+    var expectedResult, result: float32
     while readRow(x):
       echo "test vector #", x.processedRows - 1  # first row is header
       c1 = lab(x.rowEntry("c1l").parseFloat.float32, x.rowEntry("c1a").parseFloat.float32, x.rowEntry("c1b").parseFloat.float32)
       c2 = lab(x.rowEntry("c2l").parseFloat.float32, x.rowEntry("c2a").parseFloat.float32, x.rowEntry("c2b").parseFloat.float32)
-      checkAlmostEqual(x.rowEntry("deltaE00").parseFloat.float32, deltaE00(c1, c2))
+      expectedResult = x.rowEntry("deltaE00").parseFloat.float32
+      result = deltaE00(c1, c2)
+      echo "\tc1: ", c1
+      echo "\tc2: ", c2
+      echo "\texpect: ", expectedResult
+      echo "\tresult: ", result
+      checkAlmostEqual(expectedResult, result)
+  test "examples from color-proximity ruby gem README":
+    let
+      c0 = "000003"
+      c1 = "000001"
+      c2 = "000002"
+      c3 = "ffffff"
+      res1 = deltaE00(c0, c1)
+      res2 = deltaE00(c0, c2)
+      res3 = deltaE00(c0, c3)
+      expRes1 = 3.3166247903554.float32
+      expRes2 = 1.4142135623730951.float32
+      expRes3 = 762.3437544835007.float32
+    echo "Distances between c0 and c_i with i = 1, 2, 3"
+    echo "\tc0: ", c0
+    echo "\tc1: ", c1
+    echo "\tc2: ", c2
+    echo "\tc3: ", c3
+    echo "\t(c0, c1): ", res1
+    echo "\texpected: ", expRes1
+    echo "\t(c0, c2): ", res2
+    echo "\texpected: ", expRes2
+    echo "\t(c0, c3): ", res3
+    echo "\texpected: ", expRes3
+    checkAlmostEqual(res1, expRes1)
+    checkAlmostEqual(res2, expRes2)
+    checkAlmostEqual(res3, expRes3)
+  test "example of proximity failures":
+    let
+      c1 = "FFDF00"
+      c2 = "FFEC25"
+      result = deltaE00(c1, c2) / 100  # color distance ruby gem does scale between 0 and 1 (cytting off all values > 100)
+    echo "Nim (c1) against Dafny (c2)"
+    echo "\tc1: ", c1
+    echo "\tc2: ", c2
+    echo "\tresult: ", result
+    check result < 0.05  # proximity threshold set in linguist
