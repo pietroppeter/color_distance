@@ -122,12 +122,12 @@ when isMainModule:
       c1 = "000001"
       c2 = "000002"
       c3 = "ffffff"
-      res1 = deltaE00(c0, c1)
-      res2 = deltaE00(c0, c2)
-      res3 = deltaE00(c0, c3)
-      expRes1 = 3.3166247903554.float32
-      expRes2 = 1.4142135623730951.float32
-      expRes3 = 762.3437544835007.float32
+      res1 = deltaE00(c0, c1) / 100.0
+      res2 = deltaE00(c0, c2) / 100.0
+      res3 = deltaE00(c0, c3) / 100.0
+      expRes1 = 0.00832.float32
+      expRes2 = 0.00412.float32
+      expRes3 = 0.99948.float32
     echo "Distances between c0 and c_i with i = 1, 2, 3"
     echo "\tc0: ", c0
     echo "\tc1: ", c1
