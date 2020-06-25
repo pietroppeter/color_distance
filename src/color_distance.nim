@@ -12,7 +12,7 @@ proc myAtan(x, y: float32): float32 =
   else:
     arctan2(x, y).radToDeg + 360
 
-func deltaE00(c1, c2: ColorLAB, k_L, k_C, k_H = 1.float32): float32 =
+func deltaE00*(c1, c2: ColorLAB, k_L, k_C, k_H = 1.float32): float32 =
   let
     C1 = sqrt(c1.a^2 + c1.b^2)  # C1 and C2 are only used in computation of CM, we can remove them (or rename them C1star)
     C2 = sqrt(c2.a^2 + c2.b^2)
