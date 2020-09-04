@@ -1,3 +1,4 @@
+**update**: this repo is now obsolete since this functionality was long ago merged in [treeform/chroma](https://github.com/treeform/chroma/pull/14#event-3494305554). I will archive this. also note that color proximity test has been indeed [removed](https://github.com/github/linguist/pull/4978)
 
 This repo implements the [ciede2000 color distance](https://en.wikipedia.org/wiki/Color_difference#CIEDE2000) function.
 It is based on [[Sharma et al 2004]](http://www2.ece.rochester.edu/~gsharma/ciede2000/ciede2000noteCRNA.pdf), which also provides [test vectors](http://www2.ece.rochester.edu/~gsharma/ciede2000/).
